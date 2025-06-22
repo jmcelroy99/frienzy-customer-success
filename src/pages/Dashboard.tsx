@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarDays, TrendingUp, Users, Building2 } from "lucide-react";
+import { Toggle } from "@/components/ui/toggle";
+import { CalendarDays, TrendingUp, Users, Building2, AlertTriangle } from "lucide-react";
 
 const Dashboard = () => {
   const [dateRange, setDateRange] = useState("30");
   const [tierFilter, setTierFilter] = useState("all");
+  const [showAtRiskFirst, setShowAtRiskFirst] = useState(false);
 
   // Mock data for companies
   const companies = [
@@ -127,7 +128,23 @@ const Dashboard = () => {
       if (tierFilter === "all") return true;
       return company.tier === tierFilter;
     })
-    .sort((a, b) => b.successfulTrips - a.successfulTrips);
+    .sort((a, b) => {
+      if (showAtRiskFirst) {
+        // First sort by at-risk status (0 successful trips first)
+        const aIsAtRisk = a.successfulTrips === 0 ? 1 : 0;
+        const bIsAtRisk = b.successfulTrips === 0 ? 1 : 0;
+        
+        if (aIsAtRisk !== bIsAtRisk) {
+          return bIsAtRisk - aIsAtRisk;
+        }
+        
+        // Within each group, sort by successful trips (descending)
+        return b.successfulTrips - a.successfulTrips;
+      }
+      
+      // Default sort: by successful trips (descending)
+      return b.successfulTrips - a.successfulTrips;
+    });
 
   const totalSuccessfulTrips = companies.reduce((sum, company) => sum + company.successfulTrips, 0);
   const activeCompanies = companies.filter(company => company.successfulTrips > 0).length;
@@ -173,6 +190,18 @@ const Dashboard = () => {
                   <SelectItem value="basic">Basic</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-gray-500" />
+              <Toggle 
+                pressed={showAtRiskFirst} 
+                onPressedChange={setShowAtRiskFirst}
+                aria-label="Show at-risk clients first"
+                className="data-[state=on]:bg-orange-100 data-[state=on]:text-orange-800"
+              >
+                At-Risk First
+              </Toggle>
             </div>
           </div>
         </div>
@@ -225,6 +254,11 @@ const Dashboard = () => {
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
               Company Leaderboard
+              {showAtRiskFirst && (
+                <Badge variant="outline" className="ml-2 text-orange-600 border-orange-300">
+                  At-Risk First
+                </Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
