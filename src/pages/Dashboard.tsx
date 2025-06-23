@@ -1,15 +1,22 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
-import { CalendarDays, TrendingUp, Users, Building2, ArrowUpDown } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { CalendarDays, TrendingUp, Users, Building2, ArrowUpDown, Filter } from "lucide-react";
 
 const Dashboard = () => {
   const [dateRange, setDateRange] = useState("30");
-  const [tierFilter, setTierFilter] = useState("all");
   const [reverseOrder, setReverseOrder] = useState(false);
+  const [selectedTiers, setSelectedTiers] = useState({
+    "frienzy-pro": true,
+    "white-label": true,
+    "custom": true
+  });
 
   // Mock data for companies
   const companies = [
@@ -22,7 +29,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-20",
       accountTier: "$500/mo",
       customerAge: 45,
-      tier: "premium"
+      tier: "frienzy-pro"
     },
     {
       id: 2,
@@ -33,7 +40,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-19",
       accountTier: "$250/mo",
       customerAge: 30,
-      tier: "standard"
+      tier: "white-label"
     },
     {
       id: 3,
@@ -44,7 +51,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-18",
       accountTier: "Custom",
       customerAge: 120,
-      tier: "enterprise"
+      tier: "custom"
     },
     {
       id: 4,
@@ -55,7 +62,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-15",
       accountTier: "$250/mo",
       customerAge: 60,
-      tier: "standard"
+      tier: "frienzy-pro"
     },
     {
       id: 5,
@@ -66,7 +73,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-10",
       accountTier: "$100/mo",
       customerAge: 25,
-      tier: "basic"
+      tier: "white-label"
     },
     {
       id: 6,
@@ -77,7 +84,7 @@ const Dashboard = () => {
       lastTripDate: "2024-05-28",
       accountTier: "$100/mo",
       customerAge: 90,
-      tier: "basic"
+      tier: "frienzy-pro"
     },
     {
       id: 7,
@@ -88,7 +95,7 @@ const Dashboard = () => {
       lastTripDate: "2024-06-21",
       accountTier: "$250/mo",
       customerAge: 8,
-      tier: "standard"
+      tier: "custom"
     }
   ];
 
@@ -107,11 +114,19 @@ const Dashboard = () => {
 
   const getTierColor = (tier: string) => {
     switch (tier) {
-      case "enterprise": return "bg-purple-100 text-purple-800";
-      case "premium": return "bg-blue-100 text-blue-800";
-      case "standard": return "bg-green-100 text-green-800";
-      case "basic": return "bg-yellow-100 text-yellow-800";
+      case "custom": return "bg-purple-100 text-purple-800";
+      case "frienzy-pro": return "bg-blue-100 text-blue-800";
+      case "white-label": return "bg-green-100 text-green-800";
       default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getTierDisplayName = (tier: string) => {
+    switch (tier) {
+      case "frienzy-pro": return "Frienzy Pro";
+      case "white-label": return "Frienzy White-Label";
+      case "custom": return "Frienzy Custom";
+      default: return tier;
     }
   };
 
@@ -123,11 +138,15 @@ const Dashboard = () => {
     });
   };
 
+  const handleTierToggle = (tier: string, checked: boolean) => {
+    setSelectedTiers(prev => ({
+      ...prev,
+      [tier]: checked
+    }));
+  };
+
   const filteredCompanies = companies
-    .filter(company => {
-      if (tierFilter === "all") return true;
-      return company.tier === tierFilter;
-    })
+    .filter(company => selectedTiers[company.tier as keyof typeof selectedTiers])
     .sort((a, b) => {
       const comparison = b.successfulTrips - a.successfulTrips;
       return reverseOrder ? -comparison : comparison;
@@ -163,20 +182,46 @@ const Dashboard = () => {
               </Select>
             </div>
             
-            <div className="flex items-center gap-2">
-              <Building2 className="h-4 w-4 text-gray-500" />
-              <Select value={tierFilter} onValueChange={setTierFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="All tiers" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All tiers</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
-                  <SelectItem value="standard">Standard</SelectItem>
-                  <SelectItem value="basic">Basic</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <span className="text-sm font-medium text-gray-700">Tiers:</span>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="frienzy-pro" 
+                    checked={selectedTiers["frienzy-pro"]}
+                    onCheckedChange={(checked) => handleTierToggle("frienzy-pro", checked as boolean)}
+                  />
+                  <Label htmlFor="frienzy-pro" className="text-sm font-medium">
+                    ✅ Frienzy Pro
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="white-label" 
+                    checked={selectedTiers["white-label"]}
+                    onCheckedChange={(checked) => handleTierToggle("white-label", checked as boolean)}
+                  />
+                  <Label htmlFor="white-label" className="text-sm font-medium">
+                    ✅ Frienzy White-Label
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="custom" 
+                    checked={selectedTiers["custom"]}
+                    onCheckedChange={(checked) => handleTierToggle("custom", checked as boolean)}
+                  />
+                  <Label htmlFor="custom" className="text-sm font-medium">
+                    ✅ Frienzy Custom
+                  </Label>
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -258,7 +303,7 @@ const Dashboard = () => {
                   <TableHead className="text-center">Total Trips Created</TableHead>
                   <TableHead className="text-center">Avg Guests per Trip</TableHead>
                   <TableHead className="text-center">Last Trip Created</TableHead>
-                  <TableHead className="text-center">Account Tier</TableHead>
+                  <TableHead className="text-center">Tier</TableHead>
                   <TableHead className="text-center">Status</TableHead>
                 </TableRow>
               </TableHeader>
@@ -295,7 +340,7 @@ const Dashboard = () => {
                       </TableCell>
                       <TableCell className="text-center">
                         <Badge className={getTierColor(company.tier)}>
-                          {company.accountTier}
+                          {getTierDisplayName(company.tier)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
