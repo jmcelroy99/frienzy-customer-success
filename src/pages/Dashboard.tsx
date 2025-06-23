@@ -1,13 +1,12 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Toggle } from "@/components/ui/toggle";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { CalendarDays, TrendingUp, Users, Building2, ArrowUpDown, Filter } from "lucide-react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { CalendarDays, TrendingUp, Users, Building2, ArrowUpDown, Filter, ChevronDown } from "lucide-react";
 
 const Dashboard = () => {
   const [dateRange, setDateRange] = useState("30");
@@ -156,6 +155,17 @@ const Dashboard = () => {
   const activeCompanies = companies.filter(company => company.successfulTrips > 0).length;
   const avgSuccessfulTrips = Math.round(totalSuccessfulTrips / companies.length * 10) / 10;
 
+  const getSelectedTiersCount = () => {
+    return Object.values(selectedTiers).filter(Boolean).length;
+  };
+
+  const getFilterButtonText = () => {
+    const count = getSelectedTiersCount();
+    if (count === 3) return "All Tiers";
+    if (count === 0) return "No Tiers";
+    return `${count} Tier${count > 1 ? 's' : ''}`;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -182,46 +192,38 @@ const Dashboard = () => {
               </Select>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700">Tiers:</span>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="frienzy-pro" 
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-500" />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="gap-2">
+                    {getFilterButtonText()}
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end">
+                  <DropdownMenuLabel>Filter by Tier</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuCheckboxItem
                     checked={selectedTiers["frienzy-pro"]}
-                    onCheckedChange={(checked) => handleTierToggle("frienzy-pro", checked as boolean)}
-                  />
-                  <Label htmlFor="frienzy-pro" className="text-sm font-medium">
-                    ✅ Frienzy Pro
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="white-label" 
+                    onCheckedChange={(checked) => handleTierToggle("frienzy-pro", checked)}
+                  >
+                    Frienzy Pro
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
                     checked={selectedTiers["white-label"]}
-                    onCheckedChange={(checked) => handleTierToggle("white-label", checked as boolean)}
-                  />
-                  <Label htmlFor="white-label" className="text-sm font-medium">
-                    ✅ Frienzy White-Label
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="custom" 
+                    onCheckedChange={(checked) => handleTierToggle("white-label", checked)}
+                  >
+                    Frienzy White-Label
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
                     checked={selectedTiers["custom"]}
-                    onCheckedChange={(checked) => handleTierToggle("custom", checked as boolean)}
-                  />
-                  <Label htmlFor="custom" className="text-sm font-medium">
-                    ✅ Frienzy Custom
-                  </Label>
-                </div>
-              </div>
+                    onCheckedChange={(checked) => handleTierToggle("custom", checked)}
+                  >
+                    Frienzy Custom
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <div className="flex items-center gap-2">
