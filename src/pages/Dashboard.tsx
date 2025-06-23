@@ -221,7 +221,7 @@ const Dashboard = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>Filter by Customer Typer</DropdownMenuLabel>
+                  <DropdownMenuLabel>Filter by Customer Type</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuCheckboxItem
                     checked={selectedTypes["personal"]}
