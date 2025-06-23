@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -287,7 +288,7 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Company Leaderboard
+              Value Leaderboard
               {reverseOrder && (
                 <Badge variant="outline" className="ml-2 text-blue-600 border-blue-300">
                   Least to Most
