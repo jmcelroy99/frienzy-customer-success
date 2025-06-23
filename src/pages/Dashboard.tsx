@@ -21,7 +21,7 @@ const Dashboard = () => {
   const companies = [
     {
       id: 1,
-      name: "Adventure Tours Co.",
+      name: "Sarah Johnson",
       successfulTrips: 12,
       totalTrips: 15,
       avgGuestsPerTrip: 4.8,
@@ -54,7 +54,7 @@ const Dashboard = () => {
     },
     {
       id: 4,
-      name: "Mountain Peak Adventures",
+      name: "Mike Chen",
       successfulTrips: 4,
       totalTrips: 7,
       avgGuestsPerTrip: 2.8,
@@ -76,7 +76,7 @@ const Dashboard = () => {
     },
     {
       id: 6,
-      name: "Heritage Walks",
+      name: "Emma Rodriguez",
       successfulTrips: 0,
       totalTrips: 3,
       avgGuestsPerTrip: 1.2,
