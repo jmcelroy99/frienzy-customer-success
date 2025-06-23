@@ -172,7 +172,7 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Frienzy Customer Success Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">Customer Success Dashboard</h1>
             <p className="text-gray-600 mt-1">Companies ranked by successful trips in the last {dateRange} days</p>
           </div>
           
